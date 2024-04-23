@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../Images/GA_logo.png';
-import {FaBars} from "react-icons";
 import {AiOutlineClose} from "react-icons/ai";
 
 const Header = () => {
