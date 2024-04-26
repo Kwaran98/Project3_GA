@@ -2,8 +2,8 @@ import React from 'react'
 
 const Deletepost = () => {
   return (
-    <div>
-      Deletepost
+    <div className='center'>
+      DeletePost
     </div>
   )
 }
