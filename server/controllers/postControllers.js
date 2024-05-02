@@ -116,78 +116,108 @@ const getUserPost = async (req, res, next) => {
 };
 
 // ================= EDIT POST ============================//
-// GET : api/posts/users/:id
-// UNPROTECTED
+// PATCH : api/posts/:id
+// PROTECTED
 const editPost = async (req, res, next) => {
   try {
-    let fileName;
-    let newFilename;
-    let updatedPost;
     const postId = req.params.id;
-    let { title, category, description } = req.body;
+    const { title, category, description } = req.body;
 
-    if (!title || !category || description.length < 12) {
-      return next(new HttpError(error));
+    // Check if required fields are provided
+    if (!title || !category || !description) {
+      return next(new HttpError("Please fill in all fields.", 422));
     }
 
-    if (!req.files) {
+    let updatedPost;
+    //get oldPOst from database
+
+    // Check if thumbnail is included in the request files
+    if (!req.files || !req.files.thumbnail) {
+      // If thumbnail is not included, update post without changing thumbnail
       updatedPost = await Post.findByIdAndUpdate(
         postId,
         { title, category, description },
         { new: true }
       );
     } else {
-      //get old post from the database
-      const oldPost = await Post.findById(postId);
-      fs.unlink(
-        path.join(__dirname, "..", "uploads", oldPOst.thumbnail),
-        async (err) => {
-          if (err) {
-            return next(new HttpError(err));
-          }
-        }
-      );
-      // upload  new thumbnail
+      // Thumbnail is included, process it
       const { thumbnail } = req.files;
-      // check file size
+
+      // Check file size
       if (thumbnail.size > 2000000) {
-        return next(
-          new HttpError("Thumbnail too big. Should be less than 2mb")
+        return next(new HttpError("Thumbnail should be less than 2MB.", 422));
+      }
+
+      // Generate a new filename for the thumbnail
+      const newFilename = `${uuid()}.${thumbnail.name.split(".").pop()}`;
+
+      // Move the uploaded thumbnail to the uploads directory
+      await thumbnail.mv(path.join(__dirname, "..", "uploads", newFilename));
+
+      // Find the old post to delete its thumbnail
+      const oldPost = await Post.findById(postId);
+      if (!oldPost) {
+        return next(new HttpError("Post not found.", 404));
+      }
+      if (req.user.id == oldPost.creator) {
+        // Delete the old thumbnail file
+        fs.unlinkSync(path.join(__dirname, "..", "uploads", oldPost.thumbnail));
+
+        // Update post with new data including the new thumbnail filename
+        updatedPost = await Post.findByIdAndUpdate(
+          postId,
+          { title, category, description, thumbnail: newFilename },
+          { new: true }
         );
       }
-      fileName = thumbnail.name;
-      let splittedFilename = fileName.split(".");
-      newFilename =
-        splittedFilename[0] +
-        uuid() +
-        splittedFilename[splittedFilename.length - 1];
-      thumbnail.mv(
-        path.join(__dirname, "..", "uploads", newFilename),
-        async (err) => {
-          if (err) {
-            return next(new HttpError(err));
-          }
-        }
-      );
-
-      updatedPost = await Post.findByIdAndUpdate(
-        postId,
-        { title, category, description, thumbnail: newFilename },
-        { new: true }
-      );
     }
-
+    // Check if post was successfully updated
     if (!updatedPost) {
       return next(new HttpError("Could not update post.", 400));
     }
-  } catch (error) {}
+
+    // Send success response with updated post
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    // Handle errors
+    return next(new HttpError(error.message, 500));
+  }
 };
 
 // ================== DELETE POST ======================//
 // DELETE : api/posts/:id
 // PROTECTED
 const deletePost = async (req, res, next) => {
-  res.json("Delete Post");
+  try {
+    const postId = req.params.id;
+    if (!postId) {
+      return next(new HttpError("Post unavailable.", 400));
+    }
+    const post = await Post.findById(postId);
+    const fileName = post?.thumbnail;
+    if (req.user.id == post.creator) {
+      // delete thumbnail from uploads folder
+      fs.unlink(
+        path.join(__dirname, "..", "uploads", fileName),
+        async (err) => {
+          if (err) {
+            return next(new HttpError(err));
+          } else {
+            await Post.findByIdAndDelete(postId);
+            // find user and reduce post count by 1
+            const currentUser = await User.findById(req.user.id);
+            const userPostCount = currentUser?.posts - 1;
+            await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
+            res.json(`Post ${postId} deleted successfully.`);
+          }
+        }
+      );
+    } else {
+      return next(new HttpError("Post could not be deleted", 403));
+    }
+  } catch (error) {
+    return next(new HttpError(error.message, 500));
+  }
 };
 
 module.exports = {
