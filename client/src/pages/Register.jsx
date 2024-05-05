@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const [userData, setUserData] = useState({
@@ -9,6 +10,30 @@ const Register = () => {
     password2: "",
   });
 
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const registerUser = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_URL}/users/register`,
+        userData
+      );
+      console.log(process.env.REACT_APP_URL);
+      const newUser = await response.data;
+      console.log("New User:", newUser);
+
+      if (!newUser) {
+        setError("User exists, please login instead.");
+      }
+      navigate("/login");
+    } catch (err) {
+      setError(err.response.data.message);
+      console.error("Error:", err);
+    }
+  };
   const changeInputHandler = (e) => {
     setUserData((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
@@ -18,8 +43,8 @@ const Register = () => {
     <section className="register">
       <div className="container">
         <h2>Sign Up</h2>
-        <form className="form register__form">
-          <p className="form__error-message">This is an error message</p>
+        <form className="form register__form" onSubmit={registerUser}>
+          {error && <p className="form__error-message">{error}</p>}
           <input
             type="text"
             placeholder="Full Name"
@@ -48,9 +73,13 @@ const Register = () => {
             value={userData.password2}
             onChange={changeInputHandler}
           ></input>
-          <button type="submit" className='btn blue'>Register</button>
+          <button type="submit" className="btn blue">
+            Register
+          </button>
         </form>
-        <small>Already have an account? <Link to="/login">Sign In</Link></small>
+        <small>
+          Already have an account? <Link to="/login">Sign In</Link>
+        </small>
       </div>
     </section>
   );

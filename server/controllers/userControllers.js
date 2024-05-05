@@ -78,7 +78,7 @@ const loginUser = async (req, res, next) => {
     res.status(200).json({ token, id, name });
   } catch (error) {
     return next(
-      new HttpError("Login failed. Please check your credentisals.", 422)
+      new HttpError("Login failed. Please check your credentials.", 422)
     );
   }
 };
