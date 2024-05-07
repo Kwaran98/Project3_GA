@@ -25,9 +25,9 @@
     --form-width: 50%;
 
     --radius-1: 0.3rem;
-    --raidus-2: 0.6rem;
-    --raidus-3: 1rem;
-    --raidus-4: 2rem;
+    --radius-2: 0.6rem;
+    --radius-3: 1rem;
+    --radius-4: 2rem;
 }
 
 * {
@@ -201,6 +201,7 @@ footer {
     background: var(--color-gray-700);
     margin-top: 6rem;
     padding-top: 6rem;
+
 }
 
 .footer__categories {
@@ -245,7 +246,7 @@ footer {
 }
 
 /* =====================Posts==================== */
-.posts__container,
+.post_container,
 .author_posts__container,
 .category_posts__container {
     display: grid;
@@ -256,7 +257,7 @@ footer {
 .post {
     background: var(--color-white);
     padding: 1rem;
-    border-radius: var(--raidus-4);
+    border-radius: var(--radius-1);
     padding-bottom: 2rem;
     transition: var(--transition);
     cursor: default;
@@ -264,16 +265,19 @@ footer {
 
 .post:hover {
     box-shadow: 0 1.5rem 2rem rgba(0, 0, 0, 0.1);
+    border-radius: 10%;
+    border: 2px solid red;
 }
 
 .post__thumbnail {
-    border-radius: var(--raidus-3);
+    border-radius: var(--radius-3);
     overflow: hidden;
-    height: 16rem;
+    height: auto;
 }
 
 .post__content {
     margin-top: 1.5rem;
+    margin: 1rem 0 0.6rem;
 }
 
 .Description {
@@ -281,9 +285,6 @@ footer {
     padding-bottom: 1rem;
 }
 
-.post__content {
-    margin: 1rem 0 0.6rem;
-}
 
 .post__footer {
     display: flex;
@@ -298,7 +299,7 @@ footer {
     align-items: flex-start;
 }
 
-.post__author-avatar {
+.post_author_avatar {
     width: 2.5rem;
     aspect-ratio: 1/1;
     border-radius: var(--radius-2);
@@ -306,6 +307,16 @@ footer {
 }
 
 /* ============Post Detail============= */
+
+.post_detail_thumbnail img { 
+    width: 100%;
+    /* Ensure the image fills the container horizontally */
+    height: 100%;
+    /* Ensure the image fills the container vertically */
+    object-fit: cover;
+    /* Scale the image while preserving aspect ratio; crop if necessary */
+}
+
 .post-detail {
     width: var(--form-width);
     background: var(--color-white);
@@ -323,6 +334,11 @@ footer {
     display: flex;
     gap: 1rem;
     align-items: center;
+}
+
+.post_detail_thumbnail {
+    margin: 1rem 0;
+    height: auto;
 }
 
 /* ============== REGISTER & Form =============*/
@@ -490,6 +506,24 @@ textarea {
     gap: 1rem;
 }
 
+
+/* ===================================== LOADER ================================= */
+
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    place-items: center;
+    background: var(--color-bg);
+}
+
+.loader__image {
+    width: 4.5rem;
+    aspect-ratio: 1/1;
+}
 
 /* ============================ MEDIA QUERIES (small devices) ================= */
 

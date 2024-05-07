@@ -6,8 +6,8 @@ const Footer = () => {
     <footer>
       <ul className="footer__categories">
         <li><Link to="posts/categories/Alumni">Alumni</Link></li>
-        <li><Link to="posts/categories/FTStudents">Fulltime Students</Link></li>
-        <li><Link to="posts/categories/PTStudents">Part-time Students</Link></li>
+        <li><Link to="posts/categories/Fulltime Students">Full-Time Students</Link></li>
+        <li><Link to="posts/categories/PartTime Students">Part-Time Students</Link></li>
         <li><Link to="posts/categories/TA">Teaching Assistants</Link></li>
       </ul>
       <div className="footer__copyright">

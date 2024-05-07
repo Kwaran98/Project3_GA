@@ -4,16 +4,20 @@ const path = require("path");
 const fs = require("fs");
 const { v4: uuid } = require("uuid");
 const HttpError = require("../models/errorModel");
+const multer = require("multer");
 
 // ================ CREATE A POST ==================== //
 // POST : api/posts
 // PROTECTED
+
+
+
 const createPost = async (req, res, next) => {
   try {
     let { title, category, description } = req.body;
     if (!title || !category || !description || !req.files) {
       return next(
-        new HttpError("Fill in all fields and choose thumbnail. ", 422)
+        new HttpError("Fill in all fields and choose thumbnail. ", 422),
       );
     }
 
@@ -21,7 +25,7 @@ const createPost = async (req, res, next) => {
     // check the file size
     if (thumbnail.size > 2000000) {
       return next(
-        new HttpError("Thumbnal too big. File should be less than 2mb.")
+        new HttpError("Thumbnail too big. File should be less than 2mb.")
       );
     }
     let fileName = thumbnail.name;

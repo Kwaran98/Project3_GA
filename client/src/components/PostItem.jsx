@@ -1,29 +1,47 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import PostAuthor from './PostAuthor';
+import React from "react";
+import { Link } from "react-router-dom";
+import PostAuthor from "./PostAuthor";
 
-const PostItem = ({postID, category, title, Description, authorID, thumbnail}) => {
-    const shortDescription = Description.length > 145 ? Description.substr(0, 145) + "...": Description
-    const postTitle = title.length > 30 ? title.substr(0, 30) + '...' : title;
-    return (
+const PostItem = ({
+  postID,
+  category,
+  title,
+  description,
+  authorID,
+  thumbnail,
+  createdAt,
+}) => {
+  // Check if description and title are defined before accessing their length properties
+  const shortDescription =
+    description?.length > 145
+      ? description.substr(0, 145) + "..."
+      : description;
+  const postTitle = title?.length > 30 ? title.substr(0, 30) + "..." : title;
+
+  return (
     <div>
       <article className="post">
         <div className="post__thumbnail">
-            <img src={thumbnail} alt={title} />
+          <img
+            src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${thumbnail}`}
+            alt={title}
+          />
         </div>
         <div className="post__content">
-            <Link to={`/posts/${postID}`}>
-                <h3>{postTitle}</h3>
+          <Link to={`/posts/${postID}`}>
+            <h3>{postTitle}</h3>
+          </Link>
+          <p dangerouslySetInnerHTML={{ __html: shortDescription }} />
+          <div className="post__footer">
+            <PostAuthor authorID={authorID} createdAt={createdAt} />
+            <Link to={`/posts/categories/${category}`} className="btn primary">
+              {category}
             </Link>
-            <p className="Description">{shortDescription}</p>
-            <div className="post__footer">
-                <PostAuthor />
-                <Link to={`/posts/categories/${category}`} className='btn primary'>{category}</Link>
-            </div>
+          </div>
         </div>
       </article>
     </div>
-  )
-}
+  );
+};
 
-export default PostItem
+export default PostItem;
