@@ -115,7 +115,7 @@ section {
     background: var(--color-white);
     font-weight: 500;
     cursor: pointer;
-    transition: var(--transition)
+    transition: var(--transition);
 }
 
 .btn.primary {
@@ -308,7 +308,7 @@ footer {
 
 /* ============Post Detail============= */
 
-.post_detail_thumbnail img { 
+.post_detail_thumbnail img {
     width: 100%;
     /* Ensure the image fills the container horizontally */
     height: 100%;
@@ -453,6 +453,28 @@ textarea {
     border: 1rem solid var(--color-white);
     overflow: hidden;
 }
+
+.avatar_form label, .profile_avatar_btn{
+    background: var(--color-gray-900);
+    color: var(--color-white);
+    font-size: 1.3rem;
+    position: absolute;
+    right: 2rem;
+    bottom: 1.4rem;
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+  }
+
+.profile__avatar_btn {
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.3rem;
+    background: var(--color-primary);
+}
+
 
 .avatar__form {
     height: 1rem;

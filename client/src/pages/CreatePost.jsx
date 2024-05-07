@@ -8,7 +8,7 @@ import axios from "axios";
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('Uncategorized');
   const [description, setDescription] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [error, setError] = useState("");
