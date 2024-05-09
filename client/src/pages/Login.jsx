@@ -24,17 +24,28 @@ const Login = () => {
 
   const loginUser = async (e) => {
     e.preventDefault();
-    setError('')
-    try{
-      const response = await axios.post(`${process.env.REACT_APP_URL}/users/login`, userData)
+    setError("");
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_URL}/users/login`,
+        userData
+      );
       const user = await response.data;
-      setCurrentUser(user)
-      navigate('/')
-    } catch (err){
-      setError(err.response.data.message)
+      setCurrentUser(user);
+      navigate("/");
+    } catch (err) {
+      setError(err.response.data.message);
     }
-  }
+  };
 
+  axios.defaults.withCredentials = true;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("https://project3-ga-chi.vercel.app/login")
+      .then((result) => console.log(result))
+      .catch((err) => console.log(err));
+  };
 
   return (
     <section className="login">
