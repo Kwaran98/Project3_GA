@@ -80,7 +80,7 @@ const CreatePost = () => {
         return navigate("/");
       }
     } catch (err) {
-      setError(err.response.data.message);
+      // setError(err.response.data.message);
       console.log(err);
     }
   };

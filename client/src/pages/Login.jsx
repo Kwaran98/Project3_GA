@@ -38,14 +38,14 @@ const Login = () => {
     }
   };
 
-  axios.defaults.withCredentials = true;
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios
-      .post("https://project3-ga-chi.vercel.app/login")
-      .then((result) => console.log(result))
-      .catch((err) => console.log(err));
-  };
+  // axios.defaults.withCredentials = true;
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   axios
+  //     .post("https://project3-ga-chi.vercel.app/login")
+  //     .then((result) => console.log(result))
+  //     .catch((err) => console.log(err));
+  // };
 
   return (
     <section className="login">

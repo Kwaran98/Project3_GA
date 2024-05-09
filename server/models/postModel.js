@@ -6,7 +6,7 @@ const postSchema = new Schema(
     category: {
       type: String,
       enum: [
-        "Fulltime Students", "PartTime Students", "Alumni", "Teaching Assistant"
+        "Fulltime Students", "PartTime Students", "Alumni", "Teaching Assistant", "Uncategorized",
       ],
       message: "VALUE is not supported",
     },
