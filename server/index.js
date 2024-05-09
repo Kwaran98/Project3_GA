@@ -11,6 +11,20 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cors(
+  {
+    origin: ["https://deploy-mern-1whq.vercel.app"],
+    methods:["POST","GET"],
+    credentials: true
+  }
+))
+
+app.get("/",(req,res) => {
+
+    res.json("Hello");
+
+})
+
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(upload());
 app.use("/uploads", express.static(__dirname + "/uploads"));
