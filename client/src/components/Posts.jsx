@@ -12,9 +12,13 @@ const Posts = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(`${process.env.REACT_APP_URL}/posts`);
-        setPosts(response?.data);
+        if (response?.data && Array.isArray(response.data)) {
+          setPosts(response.data);
+        } else {
+          console.log("Invalid data format:", response.data);
+        }
       } catch (err) {
-        console.log(err);
+        console.log("Error fetching posts:", err);
       }
       setIsLoading(false);
     };
