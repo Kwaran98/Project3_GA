@@ -12,13 +12,11 @@ const app = express();
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 
-// app.use(cors(
-//   {
-//     origin: ["https://project3-ga-frontend.vercel.app/login"],
-//     methods:["POST","GET"],
-//     credentials: true
-//   }
-// ))
+// CORS configuration
+const allowedOrigins = [
+  "https://wb-frontend-one.vercel.app",
+  "http://localhost:3000", // Allow requests from your local development environment
+];
 
 app.get("/", (req, res) =>
   res.status(200).json({
@@ -26,7 +24,20 @@ app.get("/", (req, res) =>
   })
 );
 
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("Request Allowed:", false);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(upload());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 

@@ -4,62 +4,56 @@ const path = require("path");
 const fs = require("fs");
 const { v4: uuid } = require("uuid");
 const HttpError = require("../models/errorModel");
+
+// Set up Multer
 const multer = require("multer");
+const upload = require("../utils/multer");
+
+//CallCloudinary//
+const cloudinary = require("../utils/cloudinary");
 
 // ================ CREATE A POST ==================== //
 // POST : api/posts
 // PROTECTED
-
-
-
 const createPost = async (req, res, next) => {
   try {
     let { title, category, description } = req.body;
-    if (!title || !category || !description || !req.files) {
+    if (!title || !category || !description || !req.file) {
       return next(
-        new HttpError("Fill in all fields and choose thumbnail. ", 422),
+        new HttpError("Fill in all fields and choose a thumbnail", 422)
       );
     }
 
-    const { thumbnail } = req.files;
-    // check the file size
-    if (thumbnail.size > 2000000) {
+    // Check file size
+    if ((thumbnail = req.file.size > 2000000)) {
+      return next(new HttpError("Thumbnail too big, Max is 2Mb"));
+    }
+
+    // Upload thumbnail to Cloudinary
+    const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
+
+    if (!cloudinaryResult.secure_url) {
       return next(
-        new HttpError("Thumbnail too big. File should be less than 2mb.")
+        new HttpError("Error uploading thumbnail to Cloudinary", 500)
       );
     }
-    let fileName = thumbnail.name;
-    let splittedFilename = fileName.split(".");
-    let newFilename =
-      splittedFilename[0] +
-      uuid() +
-      "." +
-      splittedFilename[splittedFilename.length - 1];
-    thumbnail.mv(
-      path.join(__dirname, "..", "/uploads", newFilename),
-      async (err) => {
-        if (err) {
-          return next(new HttpError(err));
-        } else {
-          const newPost = await Post.create({
-            title,
-            category,
-            description,
-            thumbnail: newFilename,
-            creator: req.user.id,
-          });
-          if (!newPost) {
-            return next(new HttpError("Post couldn't be created.", 422));
-          }
-          //find user and increase post count by 1
-          const currentUser = await User.findById(req.user.id);
-          const userPostCount = currentUser.posts + 1;
-          await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
 
-          res.status(201).json(newPost);
-        }
-      }
-    );
+    // Create new post with the Cloudinary URL
+    const newPost = await Post.create({
+      title,
+      category,
+      description,
+      thumbnail: cloudinaryResult.secure_url,
+      creator: req.user.id,
+    });
+
+    // Increment post count for the current user
+    //find user and increase post count
+    const currentUser = await User.findById(req.user.id);
+    const userPostCount = currentUser.posts + 1;
+    await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
+
+    res.status(201).json(newPost);
   } catch (error) {
     return next(new HttpError(error));
   }
@@ -127,64 +121,67 @@ const editPost = async (req, res, next) => {
     const postId = req.params.id;
     const { title, category, description } = req.body;
 
-    // Check if required fields are provided
-    if (!title || !category || !description) {
-      return next(new HttpError("Please fill in all fields.", 422));
+    // Check if title, category, and description are provided
+    if (!title || !category || description.length < 12) {
+      return next(new HttpError("Fill in all fields"), 422);
     }
 
-    let updatedPost;
-    //get oldPOst from database
+    console.log("trying to find post");
+    // Find the old post from the database
+    const oldPost = await Post.findById(postId);
+    if (!oldPost) {
+      return next(new HttpError("Post not found", 404));
+    }
 
-    // Check if thumbnail is included in the request files
-    if (!req.files || !req.files.thumbnail) {
-      // If thumbnail is not included, update post without changing thumbnail
-      updatedPost = await Post.findByIdAndUpdate(
-        postId,
-        { title, category, description },
-        { new: true }
-      );
-    } else {
-      // Thumbnail is included, process it
-      const { thumbnail } = req.files;
+    console.log("finish finding");
+    console.log("req file", req.file);
+    // Check if the current user is the creator of the post
+    if (req.user.id == oldPost.creator.toString()) {
+      console.log("Checking if user is owner of pic");
+      let updatedPost;
 
-      // Check file size
-      if (thumbnail.size > 2000000) {
-        return next(new HttpError("Thumbnail should be less than 2MB.", 422));
-      }
-
-      // Generate a new filename for the thumbnail
-      const newFilename = `${uuid()}.${thumbnail.name.split(".").pop()}`;
-
-      // Move the uploaded thumbnail to the uploads directory
-      await thumbnail.mv(path.join(__dirname, "..", "uploads", newFilename));
-
-      // Find the old post to delete its thumbnail
-      const oldPost = await Post.findById(postId);
-      if (!oldPost) {
-        return next(new HttpError("Post not found.", 404));
-      }
-      if (req.user.id == oldPost.creator) {
-        // Delete the old thumbnail file
-        fs.unlinkSync(path.join(__dirname, "..", "uploads", oldPost.thumbnail));
-
-        // Update post with new data including the new thumbnail filename
+      if (!req.file) {
+        // If no new thumbnail is provided, update post without changing the thumbnail
+        console.log("updating whout pic");
         updatedPost = await Post.findByIdAndUpdate(
           postId,
-          { title, category, description, thumbnail: newFilename },
+          { title, category, description },
+          { new: true }
+        );
+      } else {
+        // Delete old thumbnail from Cloudinary
+        await cloudinary.uploader.destroy(oldPost.thumbnail);
+
+        // Upload new thumbnail to Cloudinary
+        //const { thumbnail } = req.file;
+        //console.log("thumbnail", thumbnail)
+        const cloudinaryResult = await cloudinary.uploader.upload(
+          req.file.path
+        );
+
+        console.log("trying to", cloudinaryResult);
+        // Create new post with the updated Cloudinary URL
+        updatedPost = await Post.findByIdAndUpdate(
+          postId,
+          {
+            title,
+            category,
+            description,
+            thumbnail: cloudinaryResult.secure_url,
+          },
           { new: true }
         );
       }
-    }
-    // Check if post was successfully updated
-    if (!updatedPost) {
-      return next(new HttpError("Could not update post.", 400));
-    }
 
-    // Send success response with updated post
-    res.status(200).json(updatedPost);
+      // Return updated post
+      res.status(200).json(updatedPost);
+    } else {
+      return next(
+        new HttpError("You are not authorized to edit this post.", 403)
+      );
+    }
   } catch (error) {
-    // Handle errors
-    return next(new HttpError(error.message, 500));
+    return next(new HttpError(error));
   }
 };
 
@@ -197,25 +194,20 @@ const deletePost = async (req, res, next) => {
     if (!postId) {
       return next(new HttpError("Post unavailable.", 400));
     }
-    const post = await Post.findById(postId);
-    const fileName = post?.thumbnail;
+    
+    
     if (req.user.id == post.creator) {
-      // delete thumbnail from uploads folder
-      fs.unlink(
-        path.join(__dirname, "..", "uploads", fileName),
-        async (err) => {
-          if (err) {
-            return next(new HttpError(err));
-          } else {
-            await Post.findByIdAndDelete(postId);
-            // find user and reduce post count by 1
-            const currentUser = await User.findById(req.user.id);
-            const userPostCount = currentUser?.posts - 1;
-            await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
-            res.json(`Post ${postId} deleted successfully.`);
-          }
-        }
-      );
+      await cloudinary.uploader.destroy(fileName);
+
+      // Delete post from MongoDB
+      await Post.findByIdAndDelete(postId);
+
+      // Decrement post count for the current user
+      const currentUser = await User.findById(req.user.id);
+      const userPostCount = currentUser?.posts - 1;
+      await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
+
+      res.json(`Post ${postId} and associated image deleted successfully.`);
     } else {
       return next(new HttpError("Post could not be deleted", 403));
     }

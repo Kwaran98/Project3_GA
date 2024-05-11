@@ -58,7 +58,7 @@ const Dashboard = () => {
                 <div className="dashboard__post-info">
                   <div className="dashboard__post-thumbnail">
                     <img
-                      src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${post.thumbnail}`}
+                      src={`${post.thumbnail}`}
                       alt=""
                     />
                   </div>

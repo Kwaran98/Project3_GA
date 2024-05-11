@@ -11,12 +11,18 @@ const {
 const authMiddleware = require("../middleware/authMiddleware");
 
 const router = Router();
+const uploadMulter = require("../utils/multer");
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/:id", getUser);
 router.get("/", getAuthors);
-router.post("/change-avatar", authMiddleware, changeAvatar);
+router.post(
+  "/change-avatar",
+  uploadMulter.single("avatar"),
+  authMiddleware,
+  changeAvatar
+);
 router.patch("/edit-user", authMiddleware, editUser);
 
 router.get("/", (req, res, next) => {
