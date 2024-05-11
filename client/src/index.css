@@ -417,18 +417,19 @@ textarea {
 }
 
 .author:hover {
-    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.07);
+    box-sizing: 0 1rem 1.5rem rgba(0, 0, 0, 0.07);
+    border: 2px solid red
 }
 
-.author_avatar {
+.authors_avatar {
     width: 5rem;
     aspect-ratio: 1/1;
-    border-radius: 70%;
+    border-radius: 50%;
     border: 0.3rem solid var(--color-bg);
     overflow: hidden;
 }
 
-.author_info p {
+.authors_info {
     margin-top: 1rem;
 }
 
@@ -454,7 +455,8 @@ textarea {
     overflow: hidden;
 }
 
-.avatar_form label, .profile_avatar_btn{
+.avatar_form label,
+.profile_avatar_btn {
     background: var(--color-gray-900);
     color: var(--color-white);
     font-size: 1.3rem;
@@ -466,7 +468,7 @@ textarea {
     display: grid;
     place-items: center;
     border-radius: 50%;
-  }
+}
 
 .profile__avatar_btn {
     cursor: pointer;
