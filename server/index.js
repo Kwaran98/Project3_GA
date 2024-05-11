@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const allowedOrigins = [
-  "https://wb-frontend-one.vercel.app",
+  "project3-ga-frontend.vercel.app",
   "http://localhost:3000", // Allow requests from your local development environment
 ];
 
