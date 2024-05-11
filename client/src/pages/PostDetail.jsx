@@ -55,7 +55,7 @@ const PostDetail = () => {
           <h1 className="ptpb">{post.title}</h1>
           <div className="post-detail_thumbnail">
             <img
-              src={`${post?.thumbnail}`}
+              src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${post?.thumbnail}`}
               alt=""
             />
           </div>
