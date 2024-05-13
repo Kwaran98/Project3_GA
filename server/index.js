@@ -33,7 +33,7 @@ app.use(
 );
 
 //Checking in vercel if connected to backend
-app.get("/api/hello", (req, res) => {
+app.get("/", (req, res) => {
   res.json({
     message: "Hello Backend",
   });
