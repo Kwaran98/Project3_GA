@@ -18,14 +18,16 @@ const cloudinary = require("../utils/cloudinary");
 const createPost = async (req, res, next) => {
   try {
     let { title, category, description } = req.body;
-    if (!title || !category || !description || !req.file) {
+    const thumbnail = req.file;
+
+    if (!title || !category || !description || !thumbnail) {
       return next(
         new HttpError("Fill in all fields and choose a thumbnail", 422)
       );
     }
 
     // Check file size
-    if ((thumbnail = req.file.size > 2000000)) {
+    if (thumbnail.size > 2000000) {
       return next(new HttpError("Thumbnail too big, Max is 2Mb"));
     }
 

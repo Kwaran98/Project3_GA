@@ -17,7 +17,7 @@ const upload = require("../utils/multer");
 
 const router = Router();
 
-router.post("/", authMiddleware, createPost);
+router.post("/",upload.single('thumbnail'), authMiddleware, createPost);
 router.get("/", getPosts);
 router.get("/:id", getSinglePost);
 router.patch("/:id",upload.single('thumbnail'), authMiddleware, editPost);

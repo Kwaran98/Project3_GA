@@ -1,24 +1,21 @@
-import React from "react";
-import { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import axios from "axios";
 import { UserContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState('Uncategorized');
+  const [category, setCategory] = useState("Uncategorized");
   const [description, setDescription] = useState("");
-  const [thumbnail, setThumbnail] = useState("");
+  const [thumbnail, setThumbnail] = useState(""); // Initialize thumbnail state as null
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const { currentUser } = useContext(UserContext);
   const token = currentUser?.token;
-  //You have this token when you are logged in and you do not have the token when you are logged out
 
-  //redirect to login page for any user who is not logged in
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -61,6 +58,10 @@ const CreatePost = () => {
     "Teaching Assistant",
   ];
 
+  const handleFileChange = (e) => {
+    setThumbnail(e.target.files[0]);
+  };
+
   const createPost = async (e) => {
     e.preventDefault();
 
@@ -81,15 +82,19 @@ const CreatePost = () => {
       }
     } catch (err) {
       setError(err.response.data.message);
-      console.log(err);
     }
   };
+
   return (
     <div className="create-post">
       <div className="container">
         <h2>Create Post</h2>
         {error && <p className="form__error-message">{error}</p>}
-        <form className="form create-post__form" onSubmit={createPost}>
+        <form
+          className="form create-post__form"
+          onSubmit={createPost}
+          encType="multipart/form-data"
+        >
           <input
             type="text"
             placeholder="Title"
@@ -108,7 +113,6 @@ const CreatePost = () => {
               </option>
             ))}
           </select>
-
           <ReactQuill
             modules={modules}
             formats={formats}
