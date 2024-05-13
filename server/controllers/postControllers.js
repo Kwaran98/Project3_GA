@@ -194,9 +194,16 @@ const deletePost = async (req, res, next) => {
     if (!postId) {
       return next(new HttpError("Post unavailable.", 400));
     }
-    
-    
+
+    const post = await Post.findById(postId);
+    const fileName = post?.thumbnail;
+
+    if (!post) {
+      return next(new HttpError("Post not found", 404));
+    }
+
     if (req.user.id == post.creator) {
+      //Delete image from Cloudinary
       await cloudinary.uploader.destroy(fileName);
 
       // Delete post from MongoDB
