@@ -5,6 +5,11 @@ const fs = require("fs");
 const { v4: uuid } = require("uuid");
 const HttpError = require("../models/errorModel");
 
+const express = require("express");
+const app = express();
+
+const { mongoose } = require("mongoose");
+
 // Set up Multer
 const multer = require("multer");
 const upload = require("../utils/multer");
@@ -12,22 +17,19 @@ const upload = require("../utils/multer");
 //CallCloudinary//
 const cloudinary = require("../utils/cloudinary");
 
-// ================ CREATE A POST ==================== //
-// POST : api/posts
-// PROTECTED
+///=================CREATE POST====================///
+
 const createPost = async (req, res, next) => {
   try {
     let { title, category, description } = req.body;
-    const thumbnail = req.file;
-
-    if (!title || !category || !description || !thumbnail) {
+    if (!title || !category || !description || !req.file) {
       return next(
         new HttpError("Fill in all fields and choose a thumbnail", 422)
       );
     }
 
     // Check file size
-    if (thumbnail.size > 2000000) {
+    if ((thumbnail = req.file.size > 2000000)) {
       return next(new HttpError("Thumbnail too big, Max is 2Mb"));
     }
 
@@ -61,9 +63,9 @@ const createPost = async (req, res, next) => {
   }
 };
 
-// ================ GET ALL POST ======================= //
-// POST : api/posts
-// UNPROTECTED
+//============== GET ALL POST ==================
+//POST: api/posts
+//UNPROTECTED
 const getPosts = async (req, res, next) => {
   try {
     const posts = await Post.find().sort({ updatedAt: -1 });
@@ -73,9 +75,9 @@ const getPosts = async (req, res, next) => {
   }
 };
 
-// ================ GET SINGLE POST ===================== //
-// GET : api/posts/:id
-// UNPROTECTED
+//============== GET SINGLE POST ==================
+//GET: api/posts/:id
+//UNPROTECTED
 const getSinglePost = async (req, res, next) => {
   try {
     const postId = req.params.id;
@@ -89,22 +91,20 @@ const getSinglePost = async (req, res, next) => {
   }
 };
 
-// ================ GET POSTS BY CATEGORY ===================== //
-// GET : api/posts/categories/:category
-// UNPROTECTED
+//============== GET POSTS BY CATEGORY ==================
+//GET: api/posts/categories/:category
+//UNPROTECTED
 const getCatPosts = async (req, res, next) => {
   try {
     const { category } = req.params;
     const catPosts = await Post.find({ category }).sort({ createdAt: -1 });
     res.status(200).json(catPosts);
-  } catch (error) {
-    return next(new HttpError(error));
-  }
+  } catch (error) {}
 };
 
-// ================ GET AUTHOR POST  ===================== //
-// GET : api/posts/users/:id
-// UNPROTECTED
+//============== GET AUTHOR POST ==================
+//GET: api/posts/users/:id
+//UNPROTECTED
 const getUserPost = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -115,9 +115,9 @@ const getUserPost = async (req, res, next) => {
   }
 };
 
-// ================= EDIT POST ============================//
-// PATCH : api/posts/:id
-// PROTECTED
+//============== EDIT POST ==================
+//PATCH: api/posts/:id
+//PROTECTED
 const editPost = async (req, res, next) => {
   try {
     const postId = req.params.id;
@@ -187,14 +187,14 @@ const editPost = async (req, res, next) => {
   }
 };
 
-// ================== DELETE POST ======================//
-// DELETE : api/posts/:id
-// PROTECTED
+//============== DELETE POST ==================
+//DELETE: api/posts/:id
+//PROTECTED
 const deletePost = async (req, res, next) => {
   try {
     const postId = req.params.id;
     if (!postId) {
-      return next(new HttpError("Post unavailable.", 400));
+      return next(new HttpError("Post Unavailable"), 400);
     }
 
     const post = await Post.findById(postId);
@@ -204,8 +204,8 @@ const deletePost = async (req, res, next) => {
       return next(new HttpError("Post not found", 404));
     }
 
-    if (req.user.id == post.creator) {
-      //Delete image from Cloudinary
+    if (req.user.id !== post.creator) {
+      // Delete image from Cloudinary
       await cloudinary.uploader.destroy(fileName);
 
       // Delete post from MongoDB
@@ -218,10 +218,12 @@ const deletePost = async (req, res, next) => {
 
       res.json(`Post ${postId} and associated image deleted successfully.`);
     } else {
-      return next(new HttpError("Post could not be deleted", 403));
+      return next(
+        new HttpError("You are not authorized to delete this post.", 403)
+      );
     }
   } catch (error) {
-    return next(new HttpError(error.message, 500));
+    return next(new HttpError(error));
   }
 };
 

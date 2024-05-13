@@ -1,4 +1,8 @@
 const { Router } = require("express");
+const router = Router();
+const authMiddleware = require("../middleware/authMiddleware");
+
+const upload = require("../utils/multer");
 
 const {
   createPost,
@@ -8,14 +12,7 @@ const {
   getCatPosts,
   getPosts,
   getSinglePost,
-  removeEventListener,
 } = require("../controllers/postControllers");
-
-const authMiddleware = require("../middleware/authMiddleware");
-
-const upload = require("../utils/multer");
-
-const router = Router();
 
 router.post("/",upload.single('thumbnail'), authMiddleware, createPost);
 router.get("/", getPosts);

@@ -23,7 +23,8 @@ const PostItem = ({
       <article className="post">
         <div className="post__thumbnail">
           <img
-            src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${thumbnail}`}
+            // src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${thumbnail}`}
+            src={`${thumbnail}`}
             alt={title}
           />
         </div>

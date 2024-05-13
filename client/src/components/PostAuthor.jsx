@@ -19,6 +19,7 @@ const PostAuthor = ({ authorID, createdAt }) => {
         const response = await axios.get(
           `${process.env.REACT_APP_URL}/users/${authorID}`
         );
+        console.log("response from fe: ", response);
         setAuthor(response?.data);
       } catch (err) {
         console.log(err);
@@ -30,7 +31,8 @@ const PostAuthor = ({ authorID, createdAt }) => {
     <Link to={`/posts/users/${authorID}`} className="post__author">
       <div className="post_author_avatar">
         <img
-          src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${author?.avatar}`}
+          // src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${author?.avatar}`}
+          src={`${author?.avatar}`}
           alt=""
         />
       </div>

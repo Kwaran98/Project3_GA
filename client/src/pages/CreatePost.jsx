@@ -58,9 +58,6 @@ const CreatePost = () => {
     "Teaching Assistant",
   ];
 
-  const handleFileChange = (e) => {
-    setThumbnail(e.target.files[0]);
-  };
 
   const createPost = async (e) => {
     e.preventDefault();
