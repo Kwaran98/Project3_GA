@@ -1,90 +1,70 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import PostAuthor from "../components/PostAuthor";
-import Thumbnail from "../Images/ReactJS.png";
-import Loader from "../components/Loader";
-import DeletePost from "./DeletePost";
-import { UserContext } from "../context/userContext";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useContext, useEffect, useState }from 'react'
+import PostAuthor from '../components/PostAuthor'
+import { Link, useParams, useNavigate } from 'react-router-dom'
+import Loader from '../components/Loader'
+import { UserContext } from '../context/userContext'
+import axios from 'axios'
 
 const PostDetail = () => {
-  const { id } = useParams();
-  const [post, setPost] = useState(null);
-  const [creator, setCreatorID] = useState(null);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const {id} = useParams()
+  const [post,setPost] = useState(null)
+  const [creatorID, setCreatorID] = useState(null)
+  const [error, setError] = useState('')
+  const [isLoading,setIsLoading] = useState(false)
 
-  const { currentUser } = useContext(UserContext);
-
+  const {currentUser} = useContext(UserContext)
   const token = currentUser?.token;
-  const navigate = useNavigate();
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const getPost = async () => {
       setIsLoading(true);
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_URL}/posts/${id}`
-        );
-        setPost(response.data);
-        setCreatorID(response.data.creator);
-      } catch (error) {
-        setError(error);
+      try{
+        const response = await axios.get(`${process.env.REACT_APP_URL}/posts/${id}`)
+        setPost(response.data)
+        setCreatorID(response.data.creator)
+      }catch (error) {
+        console.log(error)
       }
-      setIsLoading(false);
-    };
-
+      setIsLoading(false)
+    }
     getPost();
-  }, []);
+  }, [])
 
-  if (isLoading) {
-    return <Loader />;
+  if(isLoading) {
+    return <Loader/>
   }
 
   const removePost = async () => {
-    const response = await axios.delete(
-      `${process.env.REACT_APP_URL}/posts/${id}`,
-      { withCredentials: true, headers: { Authorization: `Bearer ${token}` } }
-    );
-    if (!response) {
-      setError("Post deletion failed. Please try again");
+    const response = await axios.delete(`${process.env.REACT_APP_URL}/posts/${id}`, {withCredentials: true, headers: {Authorization: `Bearer ${token}`}})
+    if(!response) {
+        setError("Post deletion failed. Please try again")
     }
 
-    navigate("/");
-  };
+    navigate('/')
+}
 
   return (
-    <section className="post-detail">
-      {error && <p className="error">{error}</p>}
-      {post && (
-        <div className="container post-detail__container">
-          <div className="post-detail__header">
-            <PostAuthor authorID={creator} createdAt={post?.createdAt} />
-            {currentUser?.id === post?.creator && (
-              <div className="post_detail_buttons">
-                <Link
-                  to={`/posts/${post?._id}/edit`}
-                  className="btn sm primary"
-                >
-                  {" "}
-                  Edit
-                </Link>
-                <Link className="btn sm danger" onClick={removePost}>
-                  Delete
-                </Link>
-              </div>
-            )}
-          </div>
-          <h1 className="ptpb">{post?.title}</h1>
-          <div className="post-detail_thumbnail">
-            <img src={`${post?.thumbnail}`} alt="" />
-          </div>
-          <p dangerouslySetInnerHTML={{ __html: post?.description }}></p>
+    <section className="post_detail">
+      {error && <p className='error'>{error}</p>}
+      {post && <div className='container post_detail_container'>
+        <div className='post_detail_header'>
+          <PostAuthor authorID={creatorID} createdAt={post?.createdAt}/>
+          {currentUser?.id === post?.creator && <div className='post_detail_buttons'>
+            <Link to={`/posts/${post?._id}/edit`} className='btn sm primary'> Edit</Link>
+            <Link className='btn sm danger' onClick={removePost}>Delete</Link>
+          </div>}
         </div>
-      )}
+        <h1> {post?.title}</h1>
+        <div className='post_detail_thumbnail'>
+          {/* <img src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${post?.thumbnail}`} alt="" /> */}
+          <img src={`${post?.thumbnail}`} alt="" />
+        </div>
+        <div dangerouslySetInnerHTML={{ __html: post?.description }} />
+      </div>}
     </section>
-  );
-};
+  )
+}
 
-export default PostDetail;
+export default PostDetail

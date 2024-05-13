@@ -1,16 +1,19 @@
-import React, { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/userContext";
+import React, {useContext, useEffect} from 'react'
+import { useNavigate } from 'react-router-dom'
+import { UserContext } from '../context/userContext'
 
 const Logout = () => {
-  const { setCurrentUser } = useContext(UserContext);
-  const navigate = useNavigate();
+  const {currentUser, setCurrentUser} = useContext(UserContext)
 
   useEffect(() => {
-    setCurrentUser(null);
-    navigate("/login");
-  }, []);
-  return <div></div>;
-};
+    setCurrentUser(null)
+  }, [])
+  
+  const navigate = useNavigate()
+  navigate('/login')
+  return (
+    <div></div>
+  )
+}
 
-export default Logout;
+export default Logout

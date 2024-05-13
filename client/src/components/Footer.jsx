@@ -1,20 +1,21 @@
+
 import React from 'react'
 import { Link } from 'react-router-dom'
-
 const Footer = () => {
   return (
     <footer>
-      <ul className="footer__categories">
-        <li><Link to="posts/categories/Alumni">Alumni</Link></li>
-        <li><Link to="posts/categories/Fulltime Students">Full-Time Students</Link></li>
-        <li><Link to="posts/categories/PartTime Students">Part-Time Students</Link></li>
-        <li><Link to="posts/categories/TA">Teaching Assistants</Link></li>
+      <ul className='footer_categories'>
+        <li><Link to="/posts/categories/Software Engineer">Software Engineer</Link></li>
+        <li><Link to="/posts/categories/Data Analytics">Data Analytics</Link></li>
+        <li><Link to="/posts/categories/Data Science">Data Science</Link></li>
+        <li><Link to="/posts/categories/Digital Marketing">Digital Marketing</Link></li>
+        <li><Link to="/posts/categories/Product Management">Product Management</Link></li>
+        <li><Link to="/posts/categories/Uncategorized">Uncategorized</Link></li>
       </ul>
-      <div className="footer__copyright">
-        <small>All Rights Reserver &copy; Copyright, General Assembly Association</small>
+      <div className='footer_copyright'>
+        <small>All Rights Reserved &copy; Copyright, General Assembly.</small>
       </div>
     </footer>
   )
 }
-
 export default Footer

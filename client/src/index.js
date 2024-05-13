@@ -1,32 +1,19 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { createBrowserRouter } from "react-router-dom";
-import { RouterProvider } from 'react-router-dom';
-import "./index.css";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import './index.css';
+import Layout from './components/Layout';
 
-//Paths required for our application
-import Layout from "./components/Layout";
-import ErrorPage from "./pages/ErrorPage";
-import PostDetail from './pages/PostDetail';
-import Home from './pages/Home';
-import Register from './pages/Register';
-import Login from "./pages/Login";
-import UserProfile from "./pages/UserProfile";
-import Authors from "./pages/Authors";
-import CreatePost from "./pages/CreatePost";
-import CategoryPosts from "./pages/CategoryPosts";
-import AuthorPost from "./pages/AuthorPost";
-import Dashboard from "./pages/Dashboard";
-import EditPost from "./pages/EditPost";
-import Logout from "./pages/Logout";
-import DeletePost from "./pages/DeletePost";
-import UserProvider from "./context/userContext";
+import UserProvider from './context/userContext'
+import * as Pages from './pages';
+
+const { AuthorPosts, CategoryPosts, CreatePost, Dashboard, EditPosts, ErrorPage, Home, Login, Logout, Authors, PostDetail, Register, UserProfile } = Pages;
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <UserProvider><Layout/></UserProvider>,
-    errorElement: <ErrorPage />,
+    errorElement: <ErrorPage/>,
     children: [
       {index: true, element: <Home />},
       {path: "posts/:id", element: <PostDetail />},
@@ -36,22 +23,18 @@ const router = createBrowserRouter([
       {path: "authors", element: <Authors />},
       {path: "create", element: <CreatePost />},
       {path: "posts/categories/:category", element: <CategoryPosts />},
-      {path:"posts/users/:id", element: <AuthorPost />},
+      {path: "posts/users/:id", element: <AuthorPosts />},
       {path: "myposts/:id", element: <Dashboard />},
-      {path: "posts/:id/edit", element: <EditPost />},
-      {path: "posts/:id/delete", element: <DeletePost />},
+      {path: "posts/:id/edit", element: <EditPosts />},
       {path: "logout", element: <Logout />}
     ]
-  },
-]);
+  }
+])
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <RouterProvider router = {router}/>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
