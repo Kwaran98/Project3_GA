@@ -13,7 +13,7 @@ const app = express();
 
 // CORS configuration
 const allowedOrigins = [
-  "project3-ga-seven.vercel.app",
+  "https://project3-ga-seven.vercel.app",
   "http://localhost:3000", // Allow requests from your local development environment
 ];
 
