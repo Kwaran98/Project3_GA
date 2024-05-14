@@ -24,7 +24,7 @@ const EditPosts = () => {
     }
   }, [])
  
-  const postCategories = ["Data Analytics", "Data Science", "Digital Marketing", "Product Management", "Software Engineer", "Uncategorized"]
+  const postCategories = ["Full Time Students", "Part Time Students", "Teaching Assistants", "Alumni", "Software Engineer", "Uncategorized"]
 
   const modules = {
     toolbar: [

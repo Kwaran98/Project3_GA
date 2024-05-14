@@ -5,11 +5,11 @@ const Footer = () => {
   return (
     <footer>
       <ul className='footer_categories'>
+        <li><Link to="/posts/categories/Full Time Students">Full Time Students</Link></li>
+        <li><Link to="/posts/categories/Part Time Students">Part Time Students</Link></li>
+        <li><Link to="/posts/categories/Teaching Assistants">Teaching Assistants</Link></li>
+        <li><Link to="/posts/categories/Alumni">Alumni</Link></li>
         <li><Link to="/posts/categories/Software Engineer">Software Engineer</Link></li>
-        <li><Link to="/posts/categories/Data Analytics">Data Analytics</Link></li>
-        <li><Link to="/posts/categories/Data Science">Data Science</Link></li>
-        <li><Link to="/posts/categories/Digital Marketing">Digital Marketing</Link></li>
-        <li><Link to="/posts/categories/Product Management">Product Management</Link></li>
         <li><Link to="/posts/categories/Uncategorized">Uncategorized</Link></li>
       </ul>
       <div className='footer_copyright'>

@@ -17,10 +17,10 @@ const Header = () => {
           <img src={Logo} alt="Navbar Logo" />
         </Link>
         {currentUser?.id &&<ul className='nav_menu'>
-          <li><Link to={`/profile/${currentUser?.id}`}>{currentUser?.name}</Link></li>
-          <li><Link to={'/create'}>Create post</Link></li>
-          <li><Link to={'/authors'}>Members</Link></li>
-          <li><Link to={'/logout'}>Logout</Link></li>
+          <li className="bold"><Link to={`/profile/${currentUser?.id}`}>{currentUser?.name}</Link></li>
+          <li className="bold"><Link to={'/create'}>Create Post</Link></li>
+          <li className="bold"><Link to={'/authors'}>Members</Link></li>
+          <li className="bold"><Link to={'/logout'}>Logout</Link></li>
         </ul>}
         {!currentUser?.id &&<ul className='nav_menu'>
           <li><Link to="/authors">Members</Link></li>
