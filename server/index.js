@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cors = require("cors");
 const { connect } = require("mongoose");
@@ -21,10 +20,9 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
-        
         callback(null, true);
       } else {
-        console.log("Request Allowed:", false);
+        console.log("Request Allowed:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -41,8 +39,7 @@ app.get("/", (req, res) => {
 
 /////////////////////
 
-
-console.log("Multer here")
+console.log("Multer here");
 ////////////////////
 
 app.use(express.json({ extended: true }));
@@ -55,8 +52,6 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
-
-
 
 app.use(notFound);
 app.use(errorHandler);
