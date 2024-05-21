@@ -5,7 +5,7 @@ A MERN Stack Blog App
 You can checkout my app here:
 https://project3-ga-blog.vercel.app/
 
-![image](https://github.com/Kwaran98/Project3_GA/assets/142907620/0c3bec75-6a5b-4bcb-853a-7e29e41e6715)
+![image](https://github.com/Kwaran98/Project3_GA/assets/142907620/6f53aa73-7445-4afb-94ec-58c77d403a32)
 
 Some snapshots of my application:
 
